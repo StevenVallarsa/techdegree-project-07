@@ -1,12 +1,16 @@
 import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 
 const SearchForm = props => {
   const [search, setSearch] = useState("");
+
+  let history = useHistory();
 
   const handleFormSubmit = e => {
     e.preventDefault();
     props.handleSubmit(search);
     setSearch("");
+    history.push(`${search}`);
   };
 
   const handleChange = e => {
