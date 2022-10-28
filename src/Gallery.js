@@ -5,18 +5,19 @@ import keys from "./config";
 
 const Gallery = props => {
   const [images, setImages] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [search, setSearch] = useState(props.match.params.search);
 
-  const searchTerm = props.match.params.search;
-  const fetchUrl = `https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=${keys.flickrKey}&tags=${searchTerm}&per_page=24&format=json&nojsoncallback=1`;
+  if (search !== props.match.params.search) {
+    window.location.reload(false);
+  }
+
+  const fetchUrl = `https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=${keys.flickrKey}&tags=${search}&per_page=24&format=json&nojsoncallback=1`;
 
   useEffect(() => {
     fetch(fetchUrl)
       .then(response => response.json())
       .then(data => setImages(data.photos.photo))
-      .catch(error => console.error(error))
-      .finally(() => setIsLoading(false));
-    console.log(searchTerm);
+      .catch(error => console.error(error));
   }, []);
 
   return (
@@ -36,6 +37,7 @@ const Gallery = props => {
           images.map((photo, index) => <GalleryItem key={index} photo={photo} />)
         )}
       </ul>
+      {search + " " + props.match.params.search}
     </div>
   );
 };
