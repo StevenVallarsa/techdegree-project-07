@@ -6,19 +6,26 @@ import keys from "./config";
 const Gallery = props => {
   const [images, setImages] = useState([]);
   const [search, setSearch] = useState(props.match.params.search);
+  const [isLoading, setIsLoading] = useState(true);
 
-  if (search !== props.match.params.search) {
-    window.location.reload(false);
-  }
-
-  const fetchUrl = `https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=${keys.flickrKey}&tags=${search}&per_page=24&format=json&nojsoncallback=1`;
-
-  useEffect(() => {
+  const getPhotos = () => {
+    const fetchUrl = `https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=${keys.flickrKey}&tags=${props.match.params.search}&per_page=24&format=json&nojsoncallback=1`;
+    setIsLoading(true);
     fetch(fetchUrl)
       .then(response => response.json())
       .then(data => setImages(data.photos.photo))
-      .catch(error => console.error(error));
+      .catch(error => console.error(error))
+      .finally(() => setIsLoading(false));
+  };
+
+  useEffect(() => {
+    getPhotos();
   }, []);
+
+  if (search !== props.match.params.search) {
+    setSearch(props.match.params.search);
+    getPhotos();
+  }
 
   return (
     <div className="photo-container">
@@ -37,7 +44,7 @@ const Gallery = props => {
           images.map((photo, index) => <GalleryItem key={index} photo={photo} />)
         )}
       </ul>
-      {search + " " + props.match.params.search}
+      {search + " " + props.match.params.search + isLoading}
     </div>
   );
 };
