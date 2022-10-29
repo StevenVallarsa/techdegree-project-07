@@ -8,6 +8,7 @@ const Gallery = props => {
   const [search, setSearch] = useState(props.match.params.search);
   const [isLoading, setIsLoading] = useState(true);
 
+  // fetch call to gather 24 images from search string
   const getPhotos = () => {
     const fetchUrl = `https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=${keys.flickrKey}&tags=${props.match.params.search}&per_page=24&format=json&nojsoncallback=1`;
     setIsLoading(true);
@@ -18,10 +19,12 @@ const Gallery = props => {
       .finally(() => setIsLoading(false));
   };
 
+  // run on first call
   useEffect(() => {
     getPhotos();
   }, []);
 
+  // run on subsequent calls when search query has changed
   if (search !== props.match.params.search) {
     setSearch(props.match.params.search);
     getPhotos();
@@ -29,6 +32,7 @@ const Gallery = props => {
 
   return (
     <div className="photo-container">
+      {isLoading ? <h3>Loading...</h3> : ""}
       {images.length !== 0 && props.match.params.search ? (
         <h2>Results for {props.match.params.search[0].toUpperCase() + props.match.params.search.substring(1)}</h2>
       ) : (
@@ -44,7 +48,6 @@ const Gallery = props => {
           images.map((photo, index) => <GalleryItem key={index} photo={photo} />)
         )}
       </ul>
-      {search + " " + props.match.params.search + isLoading}
     </div>
   );
 };

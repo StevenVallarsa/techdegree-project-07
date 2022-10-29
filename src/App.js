@@ -10,6 +10,9 @@ import Start from "./Start";
 function App(props) {
   const [searchTerm, setSearchTerm] = useState("");
 
+  // This function is not used in this first iteration
+  //  of the app as search term is provided by URL
+  //  for Gallery.js component
   const handleSubmit = search => {
     setSearchTerm(search);
   };
